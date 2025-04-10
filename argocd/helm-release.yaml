@@ -1,0 +1,42 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: argocd
+  namespace: argocd
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: argo-cd
+      version: "5.51.4"  # Using a recent stable version
+      sourceRef:
+        kind: HelmRepository
+        name: argo-cd
+        namespace: argocd
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  valuesFrom:
+    - kind: ConfigMap
+      name: argocd-values
+      valuesKey: values.yaml
+  values:
+    global:
+      image:
+        tag: v2.9.3  # Using a recent stable version
+    server:
+      extraArgs:
+        - --insecure  # For initial setup, can be removed later
+      service:
+        type: ClusterIP
+    dex:
+      enabled: false  # Disable Dex for initial setup
+    redis:
+      enabled: true
+    controller:
+      enableStatefulSet: true
+    repoServer:
+      replicas: 1

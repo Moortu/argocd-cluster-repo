@@ -1,0 +1,40 @@
+# Additional custom values for ArgoCD configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-values
+  namespace: argocd
+data:
+  values.yaml: |
+    # Enhanced security settings
+    configs:
+      secret:
+        createSecret: true
+      
+      rbac:
+        defaultPolicy: 'role:readonly'
+        policy: |
+          g, system:cluster-admins, role:admin
+    
+    # High availability settings
+    redis-ha:
+      enabled: true
+      
+    # Resource limits
+    controller:
+      resources:
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      
+    server:
+      resources:
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
